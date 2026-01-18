@@ -213,6 +213,8 @@ border-radius:8px; background:#2c4cff; color:white; cursor:pointer;">
     <tbody></tbody>
 </table>
 
+    let modoScanner = "buscar"; // "buscar" o "asignar"
+let indexAsignarCodigo = null;
 
 <script>
 /* Corrected main script for Productos app.
@@ -325,13 +327,27 @@ function editarProducto(index) {
 }
 
     function agregarCodigo(index) {
-    const codigo = prompt("Escanea o escribe el código de barras:");
-    if (!codigo) return;
+    const opcion = confirm(
+        "¿Quieres ESCANEAR el código?\n\n" +
+        "Aceptar = Escanear\n" +
+        "Cancelar = Escribirlo manualmente"
+    );
 
-    productos[index].codigo = codigo.trim();
-    guardarProductos();
-    alert("Código guardado correctamente ✅");
+    if (opcion) {
+        // Escanear
+        modoScanner = "asignar";
+        indexAsignarCodigo = index;
+        abrirScanner();
+    } else {
+        // Escribir
+        const codigo = prompt("Escribe el código de barras:");
+        if (!codigo) return;
+
+        productos[index].codigo = codigo.trim();
+        guardarProductos();
+        alert("Código guardado correctamente ✅");
     }
+}
 
 // Update Bs cells and total
 function actualizarPrecios() {
@@ -629,6 +645,23 @@ function cerrarScanner() {
 function onDetectarCodigo(result) {
     const codigoLeido = result.codeResult.code.trim();
 
+    // 🟢 MODO ASIGNAR CÓDIGO
+    if (modoScanner === "asignar" && indexAsignarCodigo !== null) {
+        productos[indexAsignarCodigo].codigo = codigoLeido;
+        guardarProductos();
+
+        alert("Código asignado correctamente ✅");
+
+        // Reset
+        modoScanner = "buscar";
+        indexAsignarCodigo = null;
+
+        Quagga.offDetected(onDetectarCodigo);
+        cerrarScanner();
+        return;
+    }
+
+    // 🔵 MODO NORMAL (BUSCAR PRODUCTO)
     const producto = productos.find(p =>
         p.codigo && p.codigo.trim() === codigoLeido
     );
