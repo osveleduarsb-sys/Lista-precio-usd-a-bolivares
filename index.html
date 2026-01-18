@@ -655,18 +655,18 @@ function onDetectarCodigo(result) {
         productos[indexAsignarCodigo].codigo = codigoLeido;
         guardarProductos();
 
-        alert("Código asignado correctamente ✅");
+        alert("✅ Código asignado correctamente");
 
-        // Reset
+        // Resetear estado
         modoScanner = "buscar";
         indexAsignarCodigo = null;
 
         Quagga.offDetected(onDetectarCodigo);
         cerrarScanner();
-        return;
+        return; // ⛔ IMPORTANTE: aquí se detiene
     }
 
-    // 🔵 MODO NORMAL (BUSCAR PRODUCTO)
+    // 🔵 MODO BUSCAR PRODUCTO
     const producto = productos.find(p =>
         p.codigo && p.codigo.trim() === codigoLeido
     );
@@ -675,9 +675,9 @@ function onDetectarCodigo(result) {
         const tasa = parseFloat(document.getElementById("tasa").value) || 0;
 
         alert(
-            "Producto: " + producto.nombre +
-            "\nUSD: $" + producto.usd +
-            "\nBs: " + (producto.usd * tasa).toFixed(2)
+            "🛒 Producto: " + producto.nombre +
+            "\n💵 USD: $" + producto.usd.toFixed(2) +
+            "\n🇻🇪 Bs: " + (producto.usd * tasa).toFixed(2)
         );
     } else {
         alert("⚠️ Producto no registrado");
