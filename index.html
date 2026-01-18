@@ -212,11 +212,33 @@ border-radius:8px; background:#2c4cff; color:white; cursor:pointer;">
     </thead>
     <tbody></tbody>
 </table>
+    
+<script>
+function cerrarModalCodigo() {
+    document.getElementById("modal-codigo").style.display = "none";
+    indexAsignarCodigo = null;
+}
 
+function guardarCodigoDesdeModal() {
+    const codigo = document.getElementById("input-codigo").value.trim();
+    if (!codigo || indexAsignarCodigo === null) return;
+
+    productos[indexAsignarCodigo].codigo = codigo;
+    guardarProductos();
+
+    alert("Código guardado correctamente ✅");
+    cerrarModalCodigo();
+}
+
+function escanearDesdeModal() {
+    modoScanner = "asignar";
+    cerrarModalCodigo();
+    abrirScanner();
+}
+    
     let modoScanner = "buscar"; // "buscar" o "asignar"
 let indexAsignarCodigo = null;
-
-<script>
+    
 /* Corrected main script for Productos app.
    Fixes: ensure modal button bindings after DOM load,
    persist products and quantities, ensure calcularTotal updates on changes.
@@ -327,26 +349,9 @@ function editarProducto(index) {
 }
 
     function agregarCodigo(index) {
-    const opcion = confirm(
-        "¿Quieres ESCANEAR el código?\n\n" +
-        "Aceptar = Escanear\n" +
-        "Cancelar = Escribirlo manualmente"
-    );
-
-    if (opcion) {
-        // Escanear
-        modoScanner = "asignar";
-        indexAsignarCodigo = index;
-        abrirScanner();
-    } else {
-        // Escribir
-        const codigo = prompt("Escribe el código de barras:");
-        if (!codigo) return;
-
-        productos[index].codigo = codigo.trim();
-        guardarProductos();
-        alert("Código guardado correctamente ✅");
-    }
+    indexAsignarCodigo = index;
+    document.getElementById("input-codigo").value = "";
+    document.getElementById("modal-codigo").style.display = "flex";
 }
 
 // Update Bs cells and total
@@ -709,6 +714,31 @@ function onDetectarCodigo(result) {
 <div id="scanner" style="display:none;">
     <div id="camera"></div>
     <button onclick="cerrarScanner()">Cerrar</button>
+</div>
+
+    <!-- MODAL AGREGAR CÓDIGO -->
+<div id="modal-codigo"
+     style="display:none; position:fixed; inset:0;
+            background:rgba(0,0,0,0.5);
+            justify-content:center; align-items:center;
+            z-index:9999;">
+
+  <div style="background:white; padding:20px; border-radius:12px; width:300px;">
+    <h3>Agregar código</h3>
+
+    <input type="text" id="input-codigo"
+           placeholder="Escribe o escanea el código"
+           style="width:100%; margin-bottom:10px;">
+
+    <button onclick="escanearDesdeModal()" style="width:100%; margin-bottom:10px;">
+      📸 Escanear código
+    </button>
+
+    <div style="display:flex; justify-content:space-between;">
+      <button onclick="cerrarModalCodigo()" style="background:#999;">Cancelar</button>
+      <button onclick="guardarCodigoDesdeModal()">Aceptar</button>
+    </div>
+  </div>
 </div>
 </body>
 </html>
