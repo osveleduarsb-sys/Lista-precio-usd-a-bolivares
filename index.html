@@ -248,9 +248,10 @@ function renderizarTabla() {
             <td class="usd">${Number(prod.usd).toFixed(2)}</td>
             <td class="bs"></td>
             <td>
-                <button class="edit-btn" onclick="editarProducto(${index})">Editar</button>
-                <button class="delete-btn" onclick="eliminarProducto(${index})">X</button>
-            </td>
+    <button class="edit-btn" onclick="editarProducto(${index})">Editar</button>
+    <button onclick="agregarCodigo(${index})">+ Código</button>
+    <button class="delete-btn" onclick="eliminarProducto(${index})">X</button>
+</td>
         `;
         tabla.appendChild(fila);
     });
@@ -322,6 +323,15 @@ function editarProducto(index) {
     guardarProductos();
     renderizarTabla();
 }
+
+    function agregarCodigo(index) {
+    const codigo = prompt("Escanea o escribe el código de barras:");
+    if (!codigo) return;
+
+    productos[index].codigo = codigo.trim();
+    guardarProductos();
+    alert("Código guardado correctamente ✅");
+    }
 
 // Update Bs cells and total
 function actualizarPrecios() {
@@ -617,9 +627,23 @@ function cerrarScanner() {
 }
 
 function onDetectarCodigo(result) {
-    const codigo = result.codeResult.code;
+    const codigoLeido = result.codeResult.code.trim();
 
-    alert("C�digo detectado: " + codigo);
+    const producto = productos.find(p =>
+        p.codigo && p.codigo.trim() === codigoLeido
+    );
+
+    if (producto) {
+        const tasa = parseFloat(document.getElementById("tasa").value) || 0;
+
+        alert(
+            "Producto: " + producto.nombre +
+            "\nUSD: $" + producto.usd +
+            "\nBs: " + (producto.usd * tasa).toFixed(2)
+        );
+    } else {
+        alert("⚠️ Producto no registrado");
+    }
 
     Quagga.offDetected(onDetectarCodigo);
     cerrarScanner();
