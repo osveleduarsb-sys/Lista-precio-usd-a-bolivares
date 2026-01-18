@@ -235,7 +235,7 @@ function escanearDesdeModal() {
     cerrarModalCodigo();
     abrirScanner();
 }
-    
+    let scannerBloqueado = false;
     let modoScanner = "buscar"; // "buscar" o "asignar"
 let indexAsignarCodigo = null;
     
@@ -616,6 +616,7 @@ function toggleOrden() {
     renderizarTabla();
 }
 function abrirScanner() {
+    scannerBloqueado = false; // 🔓 desbloquear
     document.getElementById("scanner").style.display = "block";
 
     Quagga.init({
@@ -632,14 +633,14 @@ function abrirScanner() {
         }
     }, function(err) {
         if (err) {
-            alert("No se pudo abrir la c�mara");
+            alert("No se pudo abrir la cámara");
             return;
         }
         Quagga.start();
     });
 
     Quagga.offDetected(onDetectarCodigo);
-Quagga.onDetected(onDetectarCodigo);
+    Quagga.onDetected(onDetectarCodigo);
 }
 
 function cerrarScanner() {
@@ -648,6 +649,9 @@ function cerrarScanner() {
 }
 
 function onDetectarCodigo(result) {
+    if (scannerBloqueado) return; // 🚫 evita doble lectura
+    scannerBloqueado = true;      // 🔒 bloquea más detecciones
+
     const codigoLeido = result.codeResult.code.trim();
 
     // 🟢 MODO ASIGNAR CÓDIGO
@@ -663,7 +667,7 @@ function onDetectarCodigo(result) {
 
         Quagga.offDetected(onDetectarCodigo);
         cerrarScanner();
-        return; // ⛔ IMPORTANTE: aquí se detiene
+        return;
     }
 
     // 🔵 MODO BUSCAR PRODUCTO
