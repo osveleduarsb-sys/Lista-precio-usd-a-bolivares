@@ -733,6 +733,29 @@ function cerrarScanner() {
     document.getElementById("scanner").style.display = "none";
 }
 
+    function beepScanner() {
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioContext();
+
+        const oscillator = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        oscillator.type = "square";   // sonido tipo caja registradora
+        oscillator.frequency.setValueAtTime(1000, ctx.currentTime); // tono
+        gain.gain.setValueAtTime(0.15, ctx.currentTime); // volumen
+
+        oscillator.connect(gain);
+        gain.connect(ctx.destination);
+
+        oscillator.start();
+        oscillator.stop(ctx.currentTime + 0.08); // duración corta (beep)
+
+    } catch (e) {
+        console.warn("Audio no soportado");
+    }
+}
+
 function onDetectarCodigo(result) {
 
     const codigoLeido = normalizarCodigo(result.codeResult.code);
@@ -752,6 +775,8 @@ function onDetectarCodigo(result) {
     // ✅ Código confirmado
     ultimoCodigo = null;
     contadorCodigo = 0;
+
+    beepScanner(); // 🔊 BEEP de confirmación
 
     Quagga.offDetected();
     Quagga.stop();
