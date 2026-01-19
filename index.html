@@ -214,6 +214,10 @@ border-radius:8px; background:#2c4cff; color:white; cursor:pointer;">
 </table>
     
 <script>
+function normalizarCodigo(codigo) {
+    return codigo.replace(/\D/g, "").trim();
+}
+    
 function cerrarModalCodigo() {
     document.getElementById("modal-codigo").style.display = "none";
     // ❌ NO borrar indexAsignarCodigo aquí
@@ -652,12 +656,13 @@ function onDetectarCodigo(result) {
     if (scannerBloqueado) return; // 🚫 evita doble lectura
     scannerBloqueado = true;      // 🔒 bloquea más detecciones
 
-    const codigoLeido = result.codeResult.code.trim();
-
+    const codigoLeido = normalizarCodigo(result.codeResult.code);
+    
     // 🟢 MODO ASIGNAR CÓDIGO
     if (modoScanner === "asignar" && indexAsignarCodigo !== null) {
         productos[indexAsignarCodigo].codigo = codigoLeido;
         guardarProductos();
+        cargarProductos(); // 👈 ESTA LÍNEA VA AQUÍ
 
         alert("✅ Código asignado correctamente");
 
@@ -672,9 +677,9 @@ function onDetectarCodigo(result) {
 
     // 🔵 MODO BUSCAR PRODUCTO
     const producto = productos.find(p =>
-        p.codigo && p.codigo.trim() === codigoLeido
-    );
-
+    p.codigo && normalizarCodigo(p.codigo) === codigoLeido
+);
+    
     if (producto) {
         const tasa = parseFloat(document.getElementById("tasa").value) || 0;
 
