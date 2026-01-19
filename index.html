@@ -252,6 +252,9 @@ function escanearDesdeModal() {
     let modoScanner = "buscar"; // "buscar" o "asignar"
 let indexAsignarCodigo = null;
     let codigoProcesado = null; // 🔒 control duro de lectura
+    let ultimoCodigo = null;
+let contadorCodigo = 0;
+const LECTURAS_MINIMAS = 2; // puedes subir a 3 si quieres
     
 /* Corrected main script for Productos app.
    Fixes: ensure modal button bindings after DOM load,
@@ -663,22 +666,31 @@ function cerrarScanner() {
 function onDetectarCodigo(result) {
 
     const codigoLeido = normalizarCodigo(result.codeResult.code);
+    if (!codigoLeido) return;
 
-    // 🔒 Si ya procesamos un código, ignorar TODO
-    if (codigoProcesado === codigoLeido) return;
-    codigoProcesado = codigoLeido;
+    // 🔁 Validación por consenso
+    if (codigoLeido === ultimoCodigo) {
+        contadorCodigo++;
+    } else {
+        ultimoCodigo = codigoLeido;
+        contadorCodigo = 1;
+    }
 
-    // 🛑 Detener cámara INMEDIATAMENTE
+    // ⛔ Aún no es confiable
+    if (contadorCodigo < LECTURAS_MINIMAS) return;
+
+    // ✅ Código confirmado
+    ultimoCodigo = null;
+    contadorCodigo = 0;
+
     Quagga.offDetected();
     Quagga.stop();
     document.getElementById("scanner").style.display = "none";
 
     // 🟢 MODO ASIGNAR
     if (modoScanner === "asignar" && indexAsignarCodigo !== null) {
-
-        productos[indexAsignarCodigo].codigo = normalizarCodigo(codigoLeido);
+        productos[indexAsignarCodigo].codigo = codigoLeido;
         guardarProductos();
-        cargarProductos();
 
         alert("✅ Código asignado correctamente");
 
