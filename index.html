@@ -210,8 +210,10 @@ border-radius:8px; background:#2c4cff; color:white; cursor:pointer;">
 
 <h3>Agregar producto</h3>
 <input type="text" id="busqueda" placeholder="Buscar producto..." oninput="buscarProducto()" style="float:right; margin-top:10px;">
-<div id="ordenadores">
+<<div id="ordenadores">
     <button id="ordenToggleBtn" onclick="toggleOrden()">Ordenar por Precio</button>
+    <button onclick="exportarPDF()">📄 Exportar PDF</button>
+</div>
 </div>
 <input type="text" id="nombre" placeholder="Nombre del producto" />
 <input type="number" id="precio" placeholder="Precio en USD" />
@@ -230,6 +232,58 @@ border-radius:8px; background:#2c4cff; color:white; cursor:pointer;">
 </table>
     
 <script>
+function exportarPDF() {
+    if (productos.length === 0) {
+        alert("No hay productos para exportar");
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    let y = 15;
+
+    // Título
+    doc.setFontSize(14);
+    doc.text("Lista de Productos USD → Bs", 10, y);
+    y += 10;
+
+    const tasa = parseFloat(document.getElementById("tasa").value) || 0;
+
+    doc.setFontSize(10);
+    doc.text("Tasa: " + tasa + " Bs", 10, y);
+    y += 8;
+
+    // Encabezados
+    doc.setFontSize(11);
+    doc.text("Producto", 10, y);
+    doc.text("USD", 120, y);
+    doc.text("Bs", 150, y);
+    y += 6;
+
+    doc.line(10, y, 200, y);
+    y += 6;
+
+    doc.setFontSize(10);
+
+    productos.forEach(prod => {
+        if (y > 280) {
+            doc.addPage();
+            y = 20;
+        }
+
+        const precioBs = tasa ? (prod.usd * tasa).toFixed(2) : "-";
+
+        doc.text(String(prod.nombre), 10, y);
+        doc.text(prod.usd.toFixed(2), 120, y, { align: "right" });
+        doc.text(precioBs, 150, y, { align: "right" });
+
+        y += 6;
+    });
+
+    doc.save("lista_productos.pdf");
+}
+    
 function normalizarCodigo(codigo) {
     if (!codigo) return "";
     // Solo números
@@ -786,5 +840,6 @@ function onDetectarCodigo(result) {
     </div>
   </div>
 </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </body>
 </html>
