@@ -232,6 +232,8 @@ border-radius:8px; background:#2c4cff; color:white; cursor:pointer;">
 </table>
     
 <script>
+let audioCtx = null;
+    
 function exportarPDF() {
     if (productos.length === 0) {
         alert("No hay productos para exportar");
@@ -703,6 +705,15 @@ function toggleOrden() {
     renderizarTabla();
 }
 function abrirScanner() {
+// 🔓 Desbloquear audio por interacción del usuario
+    if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+    }
+    if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+    }
+    
     scannerBloqueado = false;
     codigoProcesado = null; // 🔄 reset total
     document.getElementById("scanner").style.display = "block";
@@ -734,26 +745,20 @@ function cerrarScanner() {
 }
 
     function beepScanner() {
-    try {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        const ctx = new AudioContext();
+    if (!audioCtx) return;
 
-        const oscillator = ctx.createOscillator();
-        const gain = ctx.createGain();
+    const oscillator = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
 
-        oscillator.type = "square";   // sonido tipo caja registradora
-        oscillator.frequency.setValueAtTime(1000, ctx.currentTime); // tono
-        gain.gain.setValueAtTime(0.15, ctx.currentTime); // volumen
+    oscillator.type = "square";
+    oscillator.frequency.value = 1000;
+    gain.gain.value = 0.15;
 
-        oscillator.connect(gain);
-        gain.connect(ctx.destination);
+    oscillator.connect(gain);
+    gain.connect(audioCtx.destination);
 
-        oscillator.start();
-        oscillator.stop(ctx.currentTime + 0.08); // duración corta (beep)
-
-    } catch (e) {
-        console.warn("Audio no soportado");
-    }
+    oscillator.start();
+    oscillator.stop(audioCtx.currentTime + 0.08);
 }
 
 function onDetectarCodigo(result) {
