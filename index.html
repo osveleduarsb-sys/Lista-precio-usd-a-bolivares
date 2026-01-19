@@ -215,7 +215,16 @@ border-radius:8px; background:#2c4cff; color:white; cursor:pointer;">
     
 <script>
 function normalizarCodigo(codigo) {
-    return codigo.replace(/\D/g, "").trim();
+    if (!codigo) return "";
+    // Solo números
+    let limpio = String(codigo).replace(/\D/g, "");
+
+    // Normalizar a EAN-13 si aplica
+    if (limpio.length === 12) {
+        limpio = "0" + limpio;
+    }
+
+    return limpio;
 }
     
 function cerrarModalCodigo() {
@@ -227,7 +236,7 @@ function guardarCodigoDesdeModal() {
     const codigo = document.getElementById("input-codigo").value.trim();
     if (!codigo || indexAsignarCodigo === null) return;
 
-    productos[indexAsignarCodigo].codigo = codigo;
+    productos[indexAsignarCodigo].codigo = normalizarCodigo(codigo);
     guardarProductos();
 
     alert("Código guardado correctamente ✅");
@@ -667,7 +676,7 @@ function onDetectarCodigo(result) {
     // 🟢 MODO ASIGNAR
     if (modoScanner === "asignar" && indexAsignarCodigo !== null) {
 
-        productos[indexAsignarCodigo].codigo = codigoLeido;
+        productos[indexAsignarCodigo].codigo = normalizarCodigo(codigoLeido);
         guardarProductos();
         cargarProductos();
 
