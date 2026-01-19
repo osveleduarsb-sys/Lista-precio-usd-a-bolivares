@@ -242,6 +242,7 @@ function escanearDesdeModal() {
     let scannerBloqueado = false;
     let modoScanner = "buscar"; // "buscar" o "asignar"
 let indexAsignarCodigo = null;
+    let codigoProcesado = null; // 🔒 control duro de lectura
     
 /* Corrected main script for Productos app.
    Fixes: ensure modal button bindings after DOM load,
@@ -620,7 +621,8 @@ function toggleOrden() {
     renderizarTabla();
 }
 function abrirScanner() {
-    scannerBloqueado = false; // 🔓 desbloquear
+    scannerBloqueado = false;
+    codigoProcesado = null; // 🔄 reset total
     document.getElementById("scanner").style.display = "block";
 
     Quagga.init({
@@ -628,9 +630,7 @@ function abrirScanner() {
             name: "Live",
             type: "LiveStream",
             target: document.querySelector('#camera'),
-            constraints: {
-                facingMode: "environment"
-            }
+            constraints: { facingMode: "environment" }
         },
         decoder: {
             readers: ["ean_reader", "upc_reader"]
@@ -643,43 +643,46 @@ function abrirScanner() {
         Quagga.start();
     });
 
-    Quagga.offDetected(onDetectarCodigo);
+    Quagga.offDetected();
     Quagga.onDetected(onDetectarCodigo);
 }
-
 function cerrarScanner() {
     Quagga.stop();
     document.getElementById("scanner").style.display = "none";
 }
 
 function onDetectarCodigo(result) {
-    if (scannerBloqueado) return; // 🚫 evita doble lectura
-    scannerBloqueado = true;      // 🔒 bloquea más detecciones
 
     const codigoLeido = normalizarCodigo(result.codeResult.code);
-    
-    // 🟢 MODO ASIGNAR CÓDIGO
+
+    // 🔒 Si ya procesamos un código, ignorar TODO
+    if (codigoProcesado === codigoLeido) return;
+    codigoProcesado = codigoLeido;
+
+    // 🛑 Detener cámara INMEDIATAMENTE
+    Quagga.offDetected();
+    Quagga.stop();
+    document.getElementById("scanner").style.display = "none";
+
+    // 🟢 MODO ASIGNAR
     if (modoScanner === "asignar" && indexAsignarCodigo !== null) {
+
         productos[indexAsignarCodigo].codigo = codigoLeido;
         guardarProductos();
-        cargarProductos(); // 👈 ESTA LÍNEA VA AQUÍ
+        cargarProductos();
 
         alert("✅ Código asignado correctamente");
 
-        // Resetear estado
         modoScanner = "buscar";
         indexAsignarCodigo = null;
-
-        Quagga.offDetected(onDetectarCodigo);
-        cerrarScanner();
         return;
     }
 
-    // 🔵 MODO BUSCAR PRODUCTO
+    // 🔵 MODO BUSCAR
     const producto = productos.find(p =>
-    p.codigo && normalizarCodigo(p.codigo) === codigoLeido
-);
-    
+        p.codigo && normalizarCodigo(p.codigo) === codigoLeido
+    );
+
     if (producto) {
         const tasa = parseFloat(document.getElementById("tasa").value) || 0;
 
@@ -691,9 +694,6 @@ function onDetectarCodigo(result) {
     } else {
         alert("⚠️ Producto no registrado");
     }
-
-    Quagga.offDetected(onDetectarCodigo);
-    cerrarScanner();
 }
 </script>
 
