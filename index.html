@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <title>Productos - USD a Bs</title>
+    <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2c4cff">
 <style>
 #scanner {
     position: fixed;
@@ -871,5 +873,13 @@ function onDetectarCodigo(result) {
   </div>
 </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js")
+    .then(() => console.log("Service Worker registrado"))
+    .catch(err => console.error("Error SW:", err));
+}
+    </script>
 </body>
 </html>
