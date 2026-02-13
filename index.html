@@ -120,6 +120,11 @@ body.tema-oscuro #top-bar {
 body.tema-oscuro #top-bar h2 {
     color: white;
 }
+
+body.tema-oscuro #modal-scan > div {
+    background:#1f2433;
+    color:white;
+}    
     
     h2 {
         text-align: center;
@@ -411,6 +416,20 @@ function exportarPDF() {
 
     doc.save("lista_productos.pdf");
 }
+
+function mostrarModalScan(producto) {
+    const tasa = parseFloat(document.getElementById("tasa").value) || 0;
+
+    document.getElementById("scan-nombre").textContent = producto.nombre;
+    document.getElementById("scan-usd").textContent = "💵 USD: $" + producto.usd.toFixed(2);
+    document.getElementById("scan-bs").textContent = "🇻🇪 Bs: " + (producto.usd * tasa).toFixed(2);
+
+    document.getElementById("modal-scan").style.display = "flex";
+}
+
+function cerrarModalScan() {
+    document.getElementById("modal-scan").style.display = "none";
+}    
 
 function abrirMenu() {
     document.getElementById("side-menu").style.transform = "translateX(0)";
@@ -945,14 +964,8 @@ function onDetectarCodigo(result) {
     );
 
     if (producto) {
-        const tasa = parseFloat(document.getElementById("tasa").value) || 0;
-
-        alert(
-            "🛒 Producto: " + producto.nombre +
-            "\n💵 USD: $" + producto.usd.toFixed(2) +
-            "\n🇻🇪 Bs: " + (producto.usd * tasa).toFixed(2)
-        );
-    } else {
+    mostrarModalScan(producto);
+} else {
         alert("⚠️ Producto no registrado");
     }
 }
@@ -1025,6 +1038,30 @@ if ("serviceWorker" in navigator) {
     <button onclick="toggleOrden()">📊</button>
     <button id="btn-camera" onclick="abrirScanner()">📸</button>
     <button onclick="mostrarAgregar()">➕</button>
+</div>
+
+    <!-- MODAL RESULTADO ESCANER -->
+<div id="modal-scan"
+     style="display:none; position:fixed; inset:0;
+            background:rgba(0,0,0,0.5);
+            justify-content:center; align-items:center;
+            z-index:9999;">
+
+  <div style="background:white; padding:25px; border-radius:16px; width:300px; text-align:center;">
+    
+    <h3 style="margin-top:0;">🛒 Producto encontrado</h3>
+
+    <p id="scan-nombre" style="font-weight:bold; font-size:16px;"></p>
+    <p id="scan-usd"></p>
+    <p id="scan-bs"></p>
+
+    <button onclick="cerrarModalScan()"
+            style="margin-top:15px; padding:10px 20px;
+                   border:none; background:#2c4cff;
+                   color:white; border-radius:8px;">
+        Aceptar
+    </button>
+  </div>
 </div>
 </body>
 </html>
