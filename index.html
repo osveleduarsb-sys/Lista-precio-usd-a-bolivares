@@ -9,6 +9,22 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <style>
+#modal-scan h3 {
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+#scan-nombre {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+#scan-usd,
+#scan-bs {
+    font-size: 16px;
+    margin: 5px 0;
+}
+    
 #top-bar {
     position: sticky;
     top: 0;
@@ -285,6 +301,22 @@ body.tema-oscuro #modal-cantidad button {
     font-size: 15px;
     cursor: pointer;
 }
+
+/* Modal Scan base */
+#modal-scan > div {
+    background: white;
+    color: black;
+    width: 350px;
+    max-width: 90%;
+    padding: 30px;
+    border-radius: 20px;
+}
+
+/* Modo oscuro */
+body.tema-oscuro #modal-scan > div {
+    background: #1f2433;
+    color: white;
+}    
 
 /* Modo oscuro */
 body.tema-oscuro #side-menu {
@@ -971,7 +1003,7 @@ function onDetectarCodigo(result) {
      style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
             background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:9999;">
     
-    <div style="background:white; padding:20px; border-radius:12px; width:260px; text-align:center;">
+    <div style="text-align:center;">
         <h3>Selecciona cantidad</h3>
 
         <div style="display:flex; justify-content:center; align-items:center; margin:15px 0;">
