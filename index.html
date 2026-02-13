@@ -11,36 +11,39 @@
 <style>
 #bottom-bar {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 65px;
-    background: #2c4cff;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    height: 75px;
+    background: linear-gradient(135deg, #2c4cff, #1a34cc);
     display: flex;
     justify-content: space-around;
     align-items: center;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-    box-shadow: 0 -4px 15px rgba(0,0,0,0.2);
+    border-radius: 40px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
     z-index: 1000;
 }
 
 #bottom-bar button {
     background: none;
     border: none;
-    font-size: 24px;
+    font-size: 26px;
     color: white;
+    cursor: pointer;
 }
 
 #btn-camera {
     background: white;
     color: #2c4cff;
-    width: 55px;
-    height: 55px;
+    width: 65px;
+    height: 65px;
     border-radius: 50%;
-    font-size: 26px;
-    margin-top: -25px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
 }
     
 #scanner {
@@ -145,9 +148,8 @@ body.tema-oscuro {
 }
 
     body {
-    padding-bottom: 90px;
-    }
-
+    padding-bottom: 120px;
+}
 body.tema-oscuro input,
 body.tema-oscuro button {
     background:#1d2235;
