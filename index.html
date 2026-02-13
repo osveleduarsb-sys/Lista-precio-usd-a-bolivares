@@ -32,6 +32,11 @@
     border: none;
     font-size: 22px;
     cursor: pointer;
+    color: #2c4cff; /* 🔵 Azul en modo claro */
+}
+
+body.tema-oscuro #top-bar button {
+    color: white; /* ⚪ Blanco en modo oscuro */
 }
     
 #bottom-bar button:active {
@@ -249,8 +254,6 @@ body.tema-oscuro #modal-cantidad button {
     <button id="tema-btn" onclick="toggleTema()">🌙</button>
     </div>
 
-<h2>Productos USD a Bs</h2>
-    
 <div class="fila-tasa">
     <input 
         type="number" 
