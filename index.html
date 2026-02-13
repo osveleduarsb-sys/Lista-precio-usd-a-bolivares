@@ -258,16 +258,16 @@ body.tema-oscuro #modal-cantidad button {
 #side-menu {
     position: fixed;
     top: 0;
-    left: -260px; /* escondido */
+    left: 0;
     width: 250px;
     height: 100%;
     background: white;
     box-shadow: 4px 0 15px rgba(0,0,0,0.2);
     padding: 20px;
-    transition: left 0.3s ease;
+    transition: transform 0.3s ease;
+    transform: translateX(-100%);
     z-index: 2000;
 }
-
 #side-menu h3 {
     margin-top: 0;
     color: #2c4cff;
@@ -413,15 +413,15 @@ function exportarPDF() {
 }
 
 function abrirMenu() {
-    document.getElementById("side-menu").style.left = "0";
+    document.getElementById("side-menu").style.transform = "translateX(0)";
     document.getElementById("overlay").style.display = "block";
 }
 
 function cerrarMenu() {
-    document.getElementById("side-menu").style.left = "-260px";
+    document.getElementById("side-menu").style.transform = "translateX(-100%)";
     document.getElementById("overlay").style.display = "none";
-}    
-
+}
+    
     function mostrarAgregar() {
     document.getElementById("nombre").focus();
     window.scrollTo({
@@ -834,15 +834,11 @@ window.addEventListener("load", () => {
 });
 function toggleOrden() {
     if (ordenActual === "nombre") {
-        // ORDENAR POR PRECIO
         productos.sort((a, b) => a.usd - b.usd);
         ordenActual = "precio";
-        document.getElementById("ordenToggleBtn").textContent = "Ordenar A-Z";
     } else {
-        // ORDENAR POR NOMBRE
         productos.sort((a, b) => a.nombre.localeCompare(b.nombre));
         ordenActual = "nombre";
-        document.getElementById("ordenToggleBtn").textContent = "Ordenar por Precio";
     }
 
     guardarProductos();
