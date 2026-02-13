@@ -244,12 +244,79 @@ body.tema-oscuro #modal-cantidad button {
     text-align: center;
     font-weight: bold;
 }
+
+/* OVERLAY OSCURO */
+#overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    z-index: 1500;
+}
+
+/* MENÚ LATERAL */
+#side-menu {
+    position: fixed;
+    top: 0;
+    left: -260px; /* escondido */
+    width: 250px;
+    height: 100%;
+    background: white;
+    box-shadow: 4px 0 15px rgba(0,0,0,0.2);
+    padding: 20px;
+    transition: left 0.3s ease;
+    z-index: 2000;
+}
+
+#side-menu h3 {
+    margin-top: 0;
+    color: #2c4cff;
+}
+
+#side-menu button {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #f3f6ff;
+    color: #2c4cff;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+/* Modo oscuro */
+body.tema-oscuro #side-menu {
+    background: #1a1f33;
+    color: white;
+}
+
+body.tema-oscuro #side-menu button {
+    background: #2b3250;
+    color: white;
+}    
 </style>
 </head>
 
 <body>
+<!-- OVERLAY OSCURO -->
+<div id="overlay" onclick="cerrarMenu()"></div>
+
+<!-- MENÚ LATERAL -->
+<div id="side-menu">
+    <h3>Opciones</h3>
+
+    <button onclick="exportarPDF(); cerrarMenu()">📄 Exportar PDF</button>
+    <button onclick="toggleOrden(); cerrarMenu()">📊 Ordenar</button>
+
+    <hr>
+
+    <button disabled>🔧 Próximamente...</button>
+</div>
+    
     <div id="top-bar">
-    <button id="menu-btn">☰</button>
+    <button id="menu-btn" onclick="abrirMenu()">☰</button>
     <h2>Productos USD a Bs</h2>
     <button id="tema-btn" onclick="toggleTema()">🌙</button>
     </div>
@@ -273,10 +340,6 @@ body.tema-oscuro #modal-cantidad button {
 
 <h3>Agregar producto</h3>
 <input type="text" id="busqueda" placeholder="Buscar producto..." oninput="buscarProducto()" style="float:right; margin-top:10px;">
-<div id="ordenadores">
-    <button id="ordenToggleBtn" onclick="toggleOrden()">Ordenar por Precio</button>
-    <button onclick="exportarPDF()">📄 Exportar PDF</button>
-</div>
 </div>
 <input type="text" id="nombre" placeholder="Nombre del producto" />
 <input type="number" id="precio" placeholder="Precio en USD" />
@@ -348,6 +411,16 @@ function exportarPDF() {
 
     doc.save("lista_productos.pdf");
 }
+
+function abrirMenu() {
+    document.getElementById("side-menu").style.left = "0";
+    document.getElementById("overlay").style.display = "block";
+}
+
+function cerrarMenu() {
+    document.getElementById("side-menu").style.left = "-260px";
+    document.getElementById("overlay").style.display = "none";
+}    
 
     function mostrarAgregar() {
     document.getElementById("nombre").focus();
