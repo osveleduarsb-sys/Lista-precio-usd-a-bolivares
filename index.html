@@ -9,21 +9,16 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <style>
-#modal-scan h3 {
-    font-size: 30px;
-    margin-bottom: 20px;
-}
-
-#scan-nombre {
-    font-size: 25px;
+#scan-titulo {
+    font-size: 30px;   /* mismo tamaño que tenía Producto encontrado */
     font-weight: bold;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 #scan-usd,
 #scan-bs {
     font-size: 30px;
-    margin: 8px 0;
+    margin: 12px 0;
 }
     
 #top-bar {
@@ -454,7 +449,7 @@ function exportarPDF() {
 function mostrarModalScan(producto) {
     const tasa = parseFloat(document.getElementById("tasa").value) || 0;
 
-    document.getElementById("scan-nombre").textContent = producto.nombre;
+    document.getElementById("scan-titulo").textContent = producto.nombre;
     document.getElementById("scan-usd").textContent = "💵 USD: $" + producto.usd.toFixed(2);
     document.getElementById("scan-bs").textContent = "🇻🇪 Bs: " + (producto.usd * tasa).toFixed(2);
 
@@ -1083,7 +1078,7 @@ if ("serviceWorker" in navigator) {
 
   <div class="modal-scan-box">
     
-    <h3 style="margin-top:0;">🛒 Producto encontrado</h3>
+    <h3 id="scan-titulo" style="margin-top:0;"></h3>
 
     <p id="scan-nombre" style="font-weight:bold; font-size:16px;"></p>
     <p id="scan-usd"></p>
