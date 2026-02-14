@@ -515,10 +515,10 @@ function escanearDesdeModal() {
     let scannerBloqueado = false;
     let modoScanner = "buscar"; // "buscar" o "asignar"
 let indexAsignarCodigo = null;
-    let codigoProcesado = null; // 🔒 control duro de lectura
-    let ultimoCodigo = null;
-let contadorCodigo = 0;
-const LECTURAS_MINIMAS = 2; // puedes subir a 3 si quieres
+   
+let codigoDetectado = null;
+let tiempoConfirmacion = null;
+let scannerActivo = false;
     
 /* Corrected main script for Productos app.
    Fixes: ensure modal button bindings after DOM load,
