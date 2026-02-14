@@ -964,6 +964,38 @@ function onDetectarCodigo(result) {
         }, 600); // 600ms de estabilidad
     }
 }
+
+function confirmarCodigo(codigoLeido) {
+
+    if (!scannerActivo) return;
+
+    scannerActivo = false;
+
+    Quagga.offDetected();
+    Quagga.stop();
+    document.getElementById("scanner").style.display = "none";
+
+    beepScanner();
+
+    if (modoScanner === "asignar" && indexAsignarCodigo !== null) {
+        productos[indexAsignarCodigo].codigo = codigoLeido;
+        guardarProductos();
+        alert("✅ Código asignado correctamente");
+        modoScanner = "buscar";
+        indexAsignarCodigo = null;
+        return;
+    }
+
+    const producto = productos.find(p =>
+        normalizarCodigo(p.codigo || "") === codigoLeido
+    );
+
+    if (producto) {
+        mostrarModalScan(producto);
+    } else {
+        alert("⚠️ Producto no registrado");
+    }
+}    
 </script>
 
 <!-- MODAL DE CANTIDAD -->
