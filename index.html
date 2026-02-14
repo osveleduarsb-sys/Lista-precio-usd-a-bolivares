@@ -893,6 +893,9 @@ function toggleOrden() {
     renderizarTabla();
 }
 function abrirScanner() {
+
+codigoConfirmado = false; // 🔄 reset bloqueo
+    
 // 🔓 Desbloquear audio por interacción del usuario
     if (!audioCtx) {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -949,7 +952,11 @@ function cerrarScanner() {
     oscillator.stop(audioCtx.currentTime + 0.08);
 }
 
+  let codigoConfirmado = false;  
+
 function onDetectarCodigo(result) {
+
+    if (codigoConfirmado) return;
 
     const codigoLeido = normalizarCodigo(result.codeResult.code);
     if (!codigoLeido) return;
@@ -968,6 +975,7 @@ function onDetectarCodigo(result) {
     // ✅ Código confirmado
     ultimoCodigo = null;
     contadorCodigo = 0;
+    codigoConfirmado = true;
 
     beepScanner(); // 🔊 BEEP de confirmación
 
