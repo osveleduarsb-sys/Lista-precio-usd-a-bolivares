@@ -595,7 +595,7 @@ function agregarProducto() {
         return;
     }
 
-    productos.push({ nombre: nombre, usd: precioUSD, cant: 1 });
+    productos.push({ nombre: nombre, usd: precioUSD, cant: 1, codigo: null });
     guardarProductos();
     renderizarTabla();
 
@@ -997,8 +997,8 @@ function onDetectarCodigo(result) {
 
     // 🔵 MODO BUSCAR
     const producto = productos.find(p =>
-        p.codigo && normalizarCodigo(p.codigo) === codigoLeido
-    );
+    normalizarCodigo(p.codigo || "") === codigoLeido
+);
 
     if (producto) {
     mostrarModalScan(producto);
