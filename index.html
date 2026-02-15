@@ -942,26 +942,57 @@ function cerrarScanner() {
     oscillator.stop(audioCtx.currentTime + 0.08);
 }
 
-  let codigoConfirmado = false;  
+let ultimoCodigoValido = null;
+let contadorValido = 0;
 
 function onDetectarCodigo(result) {
-
-    if (!scannerActivo) return;
 
     const codigoLeido = normalizarCodigo(result.codeResult.code);
     if (!codigoLeido) return;
 
-    // Si es nuevo código, iniciar temporizador
-    if (codigoDetectado !== codigoLeido) {
-        codigoDetectado = codigoLeido;
+    // 🔹 1. Validar longitud correcta
+    if (codigoLeido.length !== 12 && codigoLeido.length !== 13) {
+        return;
+    }
 
-        if (tiempoConfirmacion) {
-            clearTimeout(tiempoConfirmacion);
-        }
+    // 🔹 2. Validar calidad de lectura
+    const calidad = result.codeResult.decodedCodes
+        .filter(d => d.error !== undefined)
+        .reduce((sum, d) => sum + d.error, 0) / result.codeResult.decodedCodes.length;
 
-        tiempoConfirmacion = setTimeout(() => {
-            confirmarCodigo(codigoLeido);
-        }, 600); // 600ms de estabilidad
+    // Si el error promedio es alto → ignorar
+    if (calidad > 0.15) {
+        return;
+    }
+
+    // 🔹 3. Confirmar 2 lecturas iguales
+    if (codigoLeido === ultimoCodigoValido) {
+        contadorValido++;
+    } else {
+        ultimoCodigoValido = codigoLeido;
+        contadorValido = 1;
+    }
+
+    if (contadorValido < 2) return;
+
+    // Reset
+    ultimoCodigoValido = null;
+    contadorValido = 0;
+
+    beepScanner();
+    Quagga.offDetected();
+    Quagga.stop();
+    document.getElementById("scanner").style.display = "none";
+
+    // 🔹 Buscar producto
+    const producto = productos.find(p =>
+        normalizarCodigo(p.codigo || "") === codigoLeido
+    );
+
+    if (producto) {
+        mostrarModalScan(producto);
+    } else {
+        alert("⚠️ Producto no registrado");
     }
 }
 
